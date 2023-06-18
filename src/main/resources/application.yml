@@ -1,0 +1,28 @@
+logging:
+  level:
+    blog: WARN
+    org: WARN
+    org.hibernate.SQL: DEBUG
+server:
+  port: 8080
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: "jdbc:mysql://localhost:3306/books?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC"
+    username: root
+    password: 1234
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+    defer-datasource-initialization: true
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
