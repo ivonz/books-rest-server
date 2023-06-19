@@ -4,6 +4,7 @@ import bg.softuni.booksrestserver.model.dto.BookDto;
 import bg.softuni.booksrestserver.service.BookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,4 +44,13 @@ public class BookController {
                 .build();
     }
 
+    @PostMapping()
+    public ResponseEntity<BookDto> createBook(@RequestBody BookDto newBook, UriComponentsBuilder uriComponentsBuilder) {
+        long newBookId = bookService.createBook(newBook);
+
+        return ResponseEntity.created(uriComponentsBuilder
+                .path("/api/books/{id}")
+                .build(newBookId))
+                .build();
+    }
 }

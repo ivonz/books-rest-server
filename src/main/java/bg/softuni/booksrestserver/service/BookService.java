@@ -2,7 +2,9 @@ package bg.softuni.booksrestserver.service;
 
 import bg.softuni.booksrestserver.model.dto.AuthorDto;
 import bg.softuni.booksrestserver.model.dto.BookDto;
+import bg.softuni.booksrestserver.model.entity.AuthorEntity;
 import bg.softuni.booksrestserver.model.entity.BookEntity;
+import bg.softuni.booksrestserver.repository.AuthorRepository;
 import bg.softuni.booksrestserver.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +15,11 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
 
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, AuthorRepository authorRepository) {
         this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
     }
 
     public List<BookDto> getAllBooks() {
@@ -44,5 +48,21 @@ public class BookService {
 
     public void deleteById(Long bookId) {
         this.bookRepository.deleteById(bookId);
+    }
+
+    private AuthorEntity createNewAuthor(String authorName) {
+        return authorRepository.save(new AuthorEntity().setName(authorName));
+    }
+
+    public long createBook(BookDto newBook) {
+        String authorName = newBook.getAuthor().getName();
+        Optional<AuthorEntity> authorOpt = this.authorRepository.findAuthorEntityByName(authorName);
+
+        BookEntity newBookEntity = new BookEntity()
+                .setTitle(newBook.getTitle())
+                .setIsbn(newBook.getIsbn())
+                .setAuthor(authorOpt.orElseGet(() -> createNewAuthor(authorName)));
+
+        return bookRepository.save(newBookEntity).getId();
     }
 }
